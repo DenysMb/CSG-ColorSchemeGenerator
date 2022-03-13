@@ -10,7 +10,12 @@ print("Select a color from screen")
 
 hexColor, rgbTuple, rgbColor, darkRgbColor = selectColor()
 
-colorName = f'{prefix}{hexColor.lstrip("#")}'.upper()
+defaultName = f'{prefix}{hexColor.lstrip("#")}'.upper()
+
+customName = input(f"Write a name for the colorscheme or leave it blank to use the default name ({defaultName}): ")
+
+colorName = customName if len(customName.strip()) else defaultName
+
 newColorScheme=f'{kcolorschemes}/{colorName}.colors'
 newColorSchemeAlt=f'{kcolorschemes}/{colorName}-Alt.colors'
 
