@@ -27,17 +27,34 @@ def setColorScheme(color):
   else:
       return darkColorScheme
 
-def selectColor():
+def selectColor(willSelectAccent):
+  print("Select window color from screen")
+
   kcolorchooserCommand = 'kcolorchooser --print'
+  
   hexColor = subprocess.check_output(
       kcolorchooserCommand.split(), universal_newlines=True).strip()
 
-  print(f'Color: {hexColor}')
+  print(f'Window color: {hexColor}')
 
   rgbTuple = tuple(int(hexColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
 
   rgbColor = f'{",".join(map(str,rgbTuple))}'
 
   darkRgbColor = lighten(rgbTuple, 0.9)
+
+  if (willSelectAccent):
+    print("Select accent color from screen")
+
+    accentHexColor = subprocess.check_output(
+        kcolorchooserCommand.split(), universal_newlines=True).strip()
+
+    print(f'Accent color: {accentHexColor}')
+
+    accentRgbTuple = tuple(int(accentHexColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
+
+    accentRgbColor = f'{",".join(map(str,accentRgbTuple))}'
+
+    return hexColor, rgbTuple, rgbColor, darkRgbColor, accentRgbColor
 
   return hexColor, rgbTuple, rgbColor, darkRgbColor

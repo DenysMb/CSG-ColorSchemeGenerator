@@ -6,9 +6,7 @@ prefix = "CSG-"
 createDirectoryCommand = f'mkdir -p {kcolorschemes}'
 subprocess.Popen(createDirectoryCommand.split(), stdout=subprocess.PIPE)
 
-print("Select a color from screen")
-
-hexColor, rgbTuple, rgbColor, darkRgbColor = selectColor()
+hexColor, rgbTuple, rgbColor, darkRgbColor, accentRgbColor = selectColor(True)
 
 defaultName = f'{prefix}{hexColor.lstrip("#")}'.upper()
 
@@ -30,13 +28,23 @@ colorSchemeFile.close()
 
 newColorSchemeFile = open(newColorScheme, "w")
 
+isInSelection = False
+
 for line in colorSchemeLines:
+  if "[Colors:Selection]" in line:
+    isInSelection = True
+  if "[Colors:Tooltip]" in line:
+    isInSelection = False
   if "Name" in line:
     continue
   if "BackgroundNormal" in line:
-    line = f'BackgroundNormal={rgbColor}\n'
+    line = f'BackgroundNormal={rgbColor if not isInSelection else accentRgbColor}\n'
   if "BackgroundAlternate" in line:
-    line = f'BackgroundAlternate={rgbColor}\n'
+    line = f'BackgroundAlternate={rgbColor if not isInSelection else accentRgbColor}\n'
+  if "DecorationFocus" in line:
+    line = f'DecorationFocus={accentRgbColor}\n'
+  if "DecorationHover" in line:
+    line = f'DecorationHover={accentRgbColor}\n'
   if "activeBackground" in line:
     line = f'activeBackground={rgbColor}\n'
   if "inactiveBackground" in line:
@@ -54,18 +62,26 @@ colorSchemeFileAlt.close()
 newColorSchemeFileAlt = open(newColorSchemeAlt, "w")
 
 isInHeader = False
+isInSelection = False
 
 for line in colorSchemeAltLines:
   if "[Colors:Header]" in line:
     isInHeader = True
   if "[Colors:Selection]" in line:
+    isInSelection = True
     isInHeader = False
+  if "[Colors:Tooltip]" in line:
+    isInSelection = False
   if "Name" in line:
     continue
   if "BackgroundNormal" in line:
-    line = f'BackgroundNormal={darkRgbColor if isInHeader else rgbColor}\n'
+    line = f'BackgroundNormal={darkRgbColor if isInHeader else rgbColor if not isInSelection else accentRgbColor}\n'
   if "BackgroundAlternate" in line:
-    line = f'BackgroundAlternate={darkRgbColor if isInHeader else rgbColor}\n'
+    line = f'BackgroundAlternate={darkRgbColor if isInHeader else rgbColor if not isInSelection else accentRgbColor}\n'
+  if "DecorationFocus" in line:
+    line = f'DecorationFocus={accentRgbColor}\n'
+  if "DecorationHover" in line:
+    line = f'DecorationHover={accentRgbColor}\n'
   if "activeBackground" in line:
     line = f'activeBackground={darkRgbColor}\n'
   if "inactiveBackground" in line:
@@ -75,3 +91,6 @@ for line in colorSchemeAltLines:
   newColorSchemeFileAlt.write(line)
 
 newColorSchemeFileAlt.close()
+
+# DecorationFocus=61,174,233
+# DecorationHover=61,174,233

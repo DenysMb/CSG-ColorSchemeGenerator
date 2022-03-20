@@ -25,7 +25,7 @@ ruleName = f'{prefix}{appName}'
 
 print(f'Name: {name}')
 
-hexColor, rgbTuple, rgbColor, darkRgbColor = selectColor()
+hexColor, rgbTuple, rgbColor, darkRgbColor = selectColor(False)
 
 newColorScheme=f'{kcolorschemes}/{ruleName}.colors'
 
