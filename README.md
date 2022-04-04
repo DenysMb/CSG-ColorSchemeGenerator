@@ -4,6 +4,7 @@ KDE Plasma color scheme generator script.
 ## How to use
 - First we need to make the script executable. We can do it with `chmod +x csg`
 - Then, we can just execute it with `./csg` and follow the steps from terminal
+- Now you can select the generated color from KDE **System Settings**!
 
 Be sure that you have **KColorChooser** and **Python 3** installed!
 
