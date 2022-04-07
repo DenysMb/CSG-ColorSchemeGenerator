@@ -1,25 +1,25 @@
 import subprocess
-from utils import selectColor, setColorScheme, kcolorschemes
+from utils import getPalette, getWallpaper
+from utils import lighten, setColorScheme, kcolorschemes
 
-prefix = "CSG-"
+imagePath = getWallpaper()
+palette = getPalette(imagePath)
+
+colorTuple = palette[0]
+dominantColor = lighten(palette[0], 1)
+accentColor = lighten(palette[1], 1)
+darkDominantColor = lighten(colorTuple, 0.9)
 
 createDirectoryCommand = f'mkdir -p {kcolorschemes}'
 subprocess.Popen(createDirectoryCommand.split(), stdout=subprocess.PIPE)
 
-hexColor, rgbTuple, rgbColor, darkRgbColor, accentRgbColor = selectColor(True)
-
-defaultName = f'{prefix}{hexColor.lstrip("#")}'.upper()
-
-customName = input(
-    f"Write a name for the colorscheme or leave it blank to use the default name ({defaultName}): ")
-
-colorName = customName if len(customName.strip()) else defaultName
+colorName = 'WSG-Current'
 
 newColorScheme = f'{kcolorschemes}/{colorName}.colors'
 newColorSchemeAlt = f'{kcolorschemes}/{colorName}-Alt.colors'
 newColorSchemePlain = f'{kcolorschemes}/{colorName}-Plain.colors'
 
-colorScheme = setColorScheme(rgbTuple)
+colorScheme = setColorScheme(colorTuple)
 
 subprocess.Popen(f'cp {colorScheme} {newColorScheme}'.split(),
                  stdout=subprocess.PIPE).wait()
@@ -49,17 +49,17 @@ for line in colorSchemeLines:
     if "Name" in line:
         continue
     if "BackgroundNormal" in line:
-        line = f'BackgroundNormal={darkRgbColor if isInView else rgbColor if not isInSelection else accentRgbColor}\n'
+        line = f'BackgroundNormal={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
     if "BackgroundAlternate" in line:
-        line = f'BackgroundAlternate={darkRgbColor if isInView else rgbColor if not isInSelection else accentRgbColor}\n'
+        line = f'BackgroundAlternate={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
     if "DecorationFocus" in line:
-        line = f'DecorationFocus={accentRgbColor}\n'
+        line = f'DecorationFocus={accentColor}\n'
     if "DecorationHover" in line:
-        line = f'DecorationHover={accentRgbColor}\n'
+        line = f'DecorationHover={accentColor}\n'
     if "activeBackground" in line:
-        line = f'activeBackground={rgbColor}\n'
+        line = f'activeBackground={dominantColor}\n'
     if "inactiveBackground" in line:
-        line = f'inactiveBackground={rgbColor}\n'
+        line = f'inactiveBackground={dominantColor}\n'
     if "[General]" in line:
         line = f'[General]\nName={colorName}\n'
     newColorSchemeFile.write(line)
@@ -91,17 +91,17 @@ for line in colorSchemeAltLines:
     if "Name" in line:
         continue
     if "BackgroundNormal" in line:
-        line = f'BackgroundNormal={darkRgbColor if isInHeader or isInView else rgbColor if not isInSelection else accentRgbColor}\n'
+        line = f'BackgroundNormal={darkDominantColor if isInHeader or isInView else dominantColor if not isInSelection else accentColor}\n'
     if "BackgroundAlternate" in line:
-        line = f'BackgroundAlternate={darkRgbColor if isInHeader or isInView else rgbColor if not isInSelection else accentRgbColor}\n'
+        line = f'BackgroundAlternate={darkDominantColor if isInHeader or isInView else dominantColor if not isInSelection else accentColor}\n'
     if "DecorationFocus" in line:
-        line = f'DecorationFocus={accentRgbColor}\n'
+        line = f'DecorationFocus={accentColor}\n'
     if "DecorationHover" in line:
-        line = f'DecorationHover={accentRgbColor}\n'
+        line = f'DecorationHover={accentColor}\n'
     if "activeBackground" in line:
-        line = f'activeBackground={darkRgbColor}\n'
+        line = f'activeBackground={darkDominantColor}\n'
     if "inactiveBackground" in line:
-        line = f'inactiveBackground={darkRgbColor}\n'
+        line = f'inactiveBackground={darkDominantColor}\n'
     if "[General]" in line:
         line = f'[General]\nName={colorName}-Alt\n'
     newColorSchemeFileAlt.write(line)
@@ -124,22 +124,24 @@ for line in colorSchemeLines:
     if "Name" in line:
         continue
     if "BackgroundNormal" in line:
-        line = f'BackgroundNormal={darkRgbColor if isInView else rgbColor if not isInSelection else accentRgbColor}\n'
+        line = f'BackgroundNormal={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
     if "BackgroundAlternate" in line:
-        line = f'BackgroundAlternate={darkRgbColor if isInView else rgbColor if not isInSelection else accentRgbColor}\n'
+        line = f'BackgroundAlternate={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
     if "DecorationFocus" in line:
-        line = f'DecorationFocus={accentRgbColor}\n'
+        line = f'DecorationFocus={accentColor}\n'
     if "DecorationHover" in line:
-        line = f'DecorationHover={accentRgbColor}\n'
+        line = f'DecorationHover={accentColor}\n'
     if "activeBackground" in line:
-        line = f'activeBackground={rgbColor}\n'
+        line = f'activeBackground={dominantColor}\n'
     if "inactiveBackground" in line:
-        line = f'inactiveBackground={rgbColor}\n'
+        line = f'inactiveBackground={dominantColor}\n'
     if "[General]" in line:
         line = f'[General]\nName={colorName}-Plain\n'
     newColorSchemeFilePlain.write(line)
 
 newColorSchemeFilePlain.close()
 
+subprocess.Popen(f'plasma-apply-colorscheme BreezeDark'.split(),
+                 stdout=subprocess.PIPE).wait()
 subprocess.Popen(f'plasma-apply-colorscheme {colorName}'.split(),
                  stdout=subprocess.PIPE).wait()
