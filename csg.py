@@ -140,3 +140,6 @@ for line in colorSchemeLines:
     newColorSchemeFilePlain.write(line)
 
 newColorSchemeFilePlain.close()
+
+subprocess.Popen(f'plasma-apply-colorscheme {colorName}'.split(),
+                 stdout=subprocess.PIPE).wait()
