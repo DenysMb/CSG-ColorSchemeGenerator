@@ -12,7 +12,7 @@ palette = getPalette(imagePath)
 
 colorTuple = palette[0 if not reverse else 1]
 dominantColor = lighten(palette[0 if not reverse else 1], 1)
-accentColor = lighten(palette[1 if not reverse else 1], 1)
+accentColor = lighten(palette[1 if not reverse else 0], 1)
 darkDominantColor = lighten(colorTuple, 0.9)
 
 createDirectoryCommand = f'mkdir -p {kcolorschemes}'
