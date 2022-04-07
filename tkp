@@ -1,3 +1,3 @@
 #!/bin/bash
 path=$(dirname -- "$(readlink -f -- "$0")")
-python ${path}/tkp.py
+python3 ${path}/tkp.py

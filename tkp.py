@@ -101,10 +101,10 @@ if  not isAlreadyInKwinrules:
   newRules = f'kwriteconfig5 --file {kwinrules} --group General --key rules {newRulesStr if kgroupstr else groupIndex}'
   subprocess.Popen(newRules.split(), stdout=subprocess.PIPE).wait()
 
-  qdbusCommand = f'qdbus org.kde.KWin /KWin reconfigure'
+  qdbusCommand = f'qdbus-qt5 org.kde.KWin /KWin reconfigure'
   subprocess.Popen(qdbusCommand.split(), stdout=subprocess.PIPE).wait()
 else:
-  qdbusCommand = f'qdbus org.kde.KWin /KWin reconfigure'
+  qdbusCommand = f'qdbus-qt5 org.kde.KWin /KWin reconfigure'
 
   writeConfig("decocolor", "BreezeDark")
   
