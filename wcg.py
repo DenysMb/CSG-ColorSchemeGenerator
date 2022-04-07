@@ -1,147 +1,158 @@
 import subprocess
+import sys
 from utils import getPalette, getWallpaper
 from utils import lighten, setColorScheme, kcolorschemes
 
-imagePath = getWallpaper()
-palette = getPalette(imagePath)
 
-colorTuple = palette[0]
-dominantColor = lighten(palette[0], 1)
-accentColor = lighten(palette[1], 1)
-darkDominantColor = lighten(colorTuple, 0.9)
+def setColor(reverse = False):
+    imagePath = getWallpaper()
+    palette = getPalette(imagePath)
 
-createDirectoryCommand = f'mkdir -p {kcolorschemes}'
-subprocess.Popen(createDirectoryCommand.split(), stdout=subprocess.PIPE)
+    colorTuple = palette[0 if not reverse else 1]
+    dominantColor = lighten(palette[0 if not reverse else 1], 1)
+    accentColor = lighten(palette[1 if not reverse else 1], 1)
+    darkDominantColor = lighten(colorTuple, 0.9)
 
-colorName = 'WSG-Current'
+    createDirectoryCommand = f'mkdir -p {kcolorschemes}'
+    subprocess.Popen(createDirectoryCommand.split(), stdout=subprocess.PIPE)
 
-newColorScheme = f'{kcolorschemes}/{colorName}.colors'
-newColorSchemeAlt = f'{kcolorschemes}/{colorName}-Alt.colors'
-newColorSchemePlain = f'{kcolorschemes}/{colorName}-Plain.colors'
+    colorName = 'WSG-Current'
 
-colorScheme = setColorScheme(colorTuple)
+    newColorScheme = f'{kcolorschemes}/{colorName}.colors'
+    newColorSchemeAlt = f'{kcolorschemes}/{colorName}-Alt.colors'
+    newColorSchemePlain = f'{kcolorschemes}/{colorName}-Plain.colors'
 
-subprocess.Popen(f'cp {colorScheme} {newColorScheme}'.split(),
-                 stdout=subprocess.PIPE).wait()
-subprocess.Popen(
-    f'cp {colorScheme} {newColorSchemeAlt}'.split(), stdout=subprocess.PIPE).wait()
-subprocess.Popen(
-    f'cp {colorScheme} {newColorSchemePlain}'.split(), stdout=subprocess.PIPE).wait()
+    colorScheme = setColorScheme(colorTuple)
 
-colorSchemeFile = open(newColorScheme, "r")
-colorSchemeLines = colorSchemeFile.readlines()
-colorSchemeFile.close()
+    subprocess.Popen(f'cp {colorScheme} {newColorScheme}'.split(),
+                     stdout=subprocess.PIPE).wait()
+    subprocess.Popen(
+        f'cp {colorScheme} {newColorSchemeAlt}'.split(), stdout=subprocess.PIPE).wait()
+    subprocess.Popen(
+        f'cp {colorScheme} {newColorSchemePlain}'.split(), stdout=subprocess.PIPE).wait()
 
-newColorSchemeFile = open(newColorScheme, "w")
+    colorSchemeFile = open(newColorScheme, "r")
+    colorSchemeLines = colorSchemeFile.readlines()
+    colorSchemeFile.close()
 
-isInSelection = False
-isInView = False
+    newColorSchemeFile = open(newColorScheme, "w")
 
-for line in colorSchemeLines:
-    if "[Colors:Selection]" in line:
-        isInSelection = True
-    if "[Colors:Tooltip]" in line:
-        isInSelection = False
-    if "[Colors:View]" in line:
-        isInView = True
-    if "[Colors:Window]" in line:
-        isInView = False
-    if "Name" in line:
-        continue
-    if "BackgroundNormal" in line:
-        line = f'BackgroundNormal={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
-    if "BackgroundAlternate" in line:
-        line = f'BackgroundAlternate={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
-    if "DecorationFocus" in line:
-        line = f'DecorationFocus={accentColor}\n'
-    if "DecorationHover" in line:
-        line = f'DecorationHover={accentColor}\n'
-    if "activeBackground" in line:
-        line = f'activeBackground={dominantColor}\n'
-    if "inactiveBackground" in line:
-        line = f'inactiveBackground={dominantColor}\n'
-    if "[General]" in line:
-        line = f'[General]\nName={colorName}\n'
-    newColorSchemeFile.write(line)
+    isInSelection = False
+    isInView = False
 
-newColorSchemeFile.close()
+    for line in colorSchemeLines:
+        if "[Colors:Selection]" in line:
+            isInSelection = True
+        if "[Colors:Tooltip]" in line:
+            isInSelection = False
+        if "[Colors:View]" in line:
+            isInView = True
+        if "[Colors:Window]" in line:
+            isInView = False
+        if "Name" in line:
+            continue
+        if "BackgroundNormal" in line:
+            line = f'BackgroundNormal={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
+        if "BackgroundAlternate" in line:
+            line = f'BackgroundAlternate={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
+        if "DecorationFocus" in line:
+            line = f'DecorationFocus={accentColor}\n'
+        if "DecorationHover" in line:
+            line = f'DecorationHover={accentColor}\n'
+        if "activeBackground" in line:
+            line = f'activeBackground={dominantColor}\n'
+        if "inactiveBackground" in line:
+            line = f'inactiveBackground={dominantColor}\n'
+        if "[General]" in line:
+            line = f'[General]\nName={colorName}\n'
+        newColorSchemeFile.write(line)
 
-colorSchemeFileAlt = open(newColorSchemeAlt, "r")
-colorSchemeAltLines = colorSchemeFileAlt.readlines()
-colorSchemeFileAlt.close()
+    newColorSchemeFile.close()
 
-newColorSchemeFileAlt = open(newColorSchemeAlt, "w")
+    colorSchemeFileAlt = open(newColorSchemeAlt, "r")
+    colorSchemeAltLines = colorSchemeFileAlt.readlines()
+    colorSchemeFileAlt.close()
 
-isInHeader = False
-isInSelection = False
-isInView = False
+    newColorSchemeFileAlt = open(newColorSchemeAlt, "w")
 
-for line in colorSchemeAltLines:
-    if "[Colors:Header]" in line:
-        isInHeader = True
-    if "[Colors:Selection]" in line:
-        isInSelection = True
-        isInHeader = False
-    if "[Colors:Tooltip]" in line:
-        isInSelection = False
-    if "[Colors:View]" in line:
-        isInView = True
-    if "[Colors:Window]" in line:
-        isInView = False
-    if "Name" in line:
-        continue
-    if "BackgroundNormal" in line:
-        line = f'BackgroundNormal={darkDominantColor if isInHeader or isInView else dominantColor if not isInSelection else accentColor}\n'
-    if "BackgroundAlternate" in line:
-        line = f'BackgroundAlternate={darkDominantColor if isInHeader or isInView else dominantColor if not isInSelection else accentColor}\n'
-    if "DecorationFocus" in line:
-        line = f'DecorationFocus={accentColor}\n'
-    if "DecorationHover" in line:
-        line = f'DecorationHover={accentColor}\n'
-    if "activeBackground" in line:
-        line = f'activeBackground={darkDominantColor}\n'
-    if "inactiveBackground" in line:
-        line = f'inactiveBackground={darkDominantColor}\n'
-    if "[General]" in line:
-        line = f'[General]\nName={colorName}-Alt\n'
-    newColorSchemeFileAlt.write(line)
+    isInHeader = False
+    isInSelection = False
+    isInView = False
 
-newColorSchemeFileAlt.close()
+    for line in colorSchemeAltLines:
+        if "[Colors:Header]" in line:
+            isInHeader = True
+        if "[Colors:Selection]" in line:
+            isInSelection = True
+            isInHeader = False
+        if "[Colors:Tooltip]" in line:
+            isInSelection = False
+        if "[Colors:View]" in line:
+            isInView = True
+        if "[Colors:Window]" in line:
+            isInView = False
+        if "Name" in line:
+            continue
+        if "BackgroundNormal" in line:
+            line = f'BackgroundNormal={darkDominantColor if isInHeader or isInView else dominantColor if not isInSelection else accentColor}\n'
+        if "BackgroundAlternate" in line:
+            line = f'BackgroundAlternate={darkDominantColor if isInHeader or isInView else dominantColor if not isInSelection else accentColor}\n'
+        if "DecorationFocus" in line:
+            line = f'DecorationFocus={accentColor}\n'
+        if "DecorationHover" in line:
+            line = f'DecorationHover={accentColor}\n'
+        if "activeBackground" in line:
+            line = f'activeBackground={darkDominantColor}\n'
+        if "inactiveBackground" in line:
+            line = f'inactiveBackground={darkDominantColor}\n'
+        if "[General]" in line:
+            line = f'[General]\nName={colorName}-Alt\n'
+        newColorSchemeFileAlt.write(line)
 
-colorSchemeFilePlain = open(newColorSchemePlain, "r")
-colorSchemePlainLines = colorSchemeFilePlain.readlines()
-colorSchemeFilePlain.close()
+    newColorSchemeFileAlt.close()
 
-newColorSchemeFilePlain = open(newColorSchemePlain, "w")
+    colorSchemeFilePlain = open(newColorSchemePlain, "r")
+    colorSchemePlainLines = colorSchemeFilePlain.readlines()
+    colorSchemeFilePlain.close()
 
-isInSelection = False
+    newColorSchemeFilePlain = open(newColorSchemePlain, "w")
 
-for line in colorSchemeLines:
-    if "[Colors:Selection]" in line:
-        isInSelection = True
-    if "[Colors:Tooltip]" in line:
-        isInSelection = False
-    if "Name" in line:
-        continue
-    if "BackgroundNormal" in line:
-        line = f'BackgroundNormal={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
-    if "BackgroundAlternate" in line:
-        line = f'BackgroundAlternate={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
-    if "DecorationFocus" in line:
-        line = f'DecorationFocus={accentColor}\n'
-    if "DecorationHover" in line:
-        line = f'DecorationHover={accentColor}\n'
-    if "activeBackground" in line:
-        line = f'activeBackground={dominantColor}\n'
-    if "inactiveBackground" in line:
-        line = f'inactiveBackground={dominantColor}\n'
-    if "[General]" in line:
-        line = f'[General]\nName={colorName}-Plain\n'
-    newColorSchemeFilePlain.write(line)
+    isInSelection = False
 
-newColorSchemeFilePlain.close()
+    for line in colorSchemeLines:
+        if "[Colors:Selection]" in line:
+            isInSelection = True
+        if "[Colors:Tooltip]" in line:
+            isInSelection = False
+        if "Name" in line:
+            continue
+        if "BackgroundNormal" in line:
+            line = f'BackgroundNormal={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
+        if "BackgroundAlternate" in line:
+            line = f'BackgroundAlternate={darkDominantColor if isInView else dominantColor if not isInSelection else accentColor}\n'
+        if "DecorationFocus" in line:
+            line = f'DecorationFocus={accentColor}\n'
+        if "DecorationHover" in line:
+            line = f'DecorationHover={accentColor}\n'
+        if "activeBackground" in line:
+            line = f'activeBackground={dominantColor}\n'
+        if "inactiveBackground" in line:
+            line = f'inactiveBackground={dominantColor}\n'
+        if "[General]" in line:
+            line = f'[General]\nName={colorName}-Plain\n'
+        newColorSchemeFilePlain.write(line)
 
-subprocess.Popen(f'plasma-apply-colorscheme BreezeDark'.split(),
-                 stdout=subprocess.PIPE).wait()
-subprocess.Popen(f'plasma-apply-colorscheme {colorName}'.split(),
-                 stdout=subprocess.PIPE).wait()
+    newColorSchemeFilePlain.close()
+
+    subprocess.Popen(f'plasma-apply-colorscheme BreezeDark'.split(),
+                     stdout=subprocess.PIPE).wait()
+    subprocess.Popen(f'plasma-apply-colorscheme {colorName}'.split(),
+                     stdout=subprocess.PIPE).wait()
+
+def reverse():
+    try:
+        return True if sys.argv[1] else False
+    except IndexError:
+        return False
+
+setColor(reverse())
