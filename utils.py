@@ -67,37 +67,3 @@ def selectColor(willSelectAccent):
         return hexColor, rgbTuple, rgbColor, darkRgbColor, accentRgbColor
 
     return hexColor, rgbTuple, rgbColor, darkRgbColor
-
-
-def getWallpaper():
-    configFile = open(config, "r")
-
-    isInWallpaper = False
-    imagePath = ''
-
-    for line in configFile:
-        if "[" in line:
-            isInWallpaper = False
-        if "[Wallpaper]" in line:
-            isInWallpaper = True
-        if "Image" in line and isInWallpaper:
-            imagePath = line[6:].rstrip()
-            break
-
-    configFile.close()
-
-    return imagePath
-
-
-def getPalette(imagePath):
-    imageFile = Image.open(imagePath).resize((150, 150))
-    imageExtension = imagePath.split('.')[-1]
-
-    resizedImageName = f'/tmp/resized.{imageExtension}'
-    imageFile.save(resizedImageName)
-    resizedImagePath = os.path.expanduser(resizedImageName)
-
-    colorThief = ColorThief(resizedImagePath)
-    palette = colorThief.get_palette(color_count=2)
-
-    return palette
