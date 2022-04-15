@@ -8,6 +8,11 @@ KDE Plasma color scheme generator script.
 
 Be sure that you have **KColorChooser** and **Python 3** installed!
 
+## Check too
+You can check too my others two scripts:
+- [WCG - Wallpaper Color Scheme Generator](https://github.com/DenysMb/WCG-WallpaperColorSchemeGenerator): With this script you can automatically generate A color-scheme based on your wallpaper.
+- [TKP - Tile Color Picker](https://github.com/DenysMb/TKP-TileColorPicker): With this script you can set the header/tile color of a window to match with their main window color. This is a Python version of the [TKP script](https://github.com/siggsy/Tkp) from [@siggsy](https://github.com/siggsy).
+
 ## Examples
 
 Here you can see some generated colors example.
@@ -16,10 +21,4 @@ All the colors are generated with a normal style and with an alternative style, 
 
 In this video I'll show how easy is to generate a color scheme with this script:
 
-
 https://user-images.githubusercontent.com/33737137/161628670-184e1b52-5e4b-412a-a96c-a9915b8d97a4.mp4
-
-## Credits
-I'd like to create this section to thank [@siggsy](https://github.com/siggsy), creator of [TKP - Titlebar Kolor Picker](https://github.com/siggsy/Tkp).
-
-I start creating a Python version of TKP script then, based in TKP script, this CSG script.
