@@ -1,8 +1,6 @@
 import colorsys
 import subprocess
 import os
-from PIL import Image
-from colorthief import ColorThief
 
 dir = os.path.dirname(__file__)
 darkColorScheme = f"{dir}/TemplateDark.colors"
@@ -44,7 +42,7 @@ def setColorScheme(color):
         return (darkColorScheme, "dark")
 
 
-def selectColor(willSelectAccent):
+def selectColor():
     print("Select window color from screen")
 
     kcolorchooserCommand = 'kcolorchooser --print'
@@ -56,19 +54,14 @@ def selectColor(willSelectAccent):
 
     rgbTuple = tuple(int(hexColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
 
-    accentRgbTuple = (61, 174, 233)
+    print("Select accent color from screen")
 
-    if (willSelectAccent):
-        print("Select accent color from screen")
+    accentHexColor = subprocess.check_output(
+        kcolorchooserCommand.split(), universal_newlines=True).strip()
 
-        accentHexColor = subprocess.check_output(
-            kcolorchooserCommand.split(), universal_newlines=True).strip()
+    print(f'Accent color: {accentHexColor}')
 
-        print(f'Accent color: {accentHexColor}')
-
-        accentRgbTuple = tuple(int(accentHexColor.lstrip('#')[
-                               i:i+2], 16) for i in (0, 2, 4))
-
-        return hexColor, rgbTuple, accentRgbTuple
+    accentRgbTuple = tuple(int(accentHexColor.lstrip('#')[
+        i:i+2], 16) for i in (0, 2, 4))
 
     return hexColor, rgbTuple, accentRgbTuple

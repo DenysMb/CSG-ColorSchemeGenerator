@@ -6,7 +6,7 @@ prefix = "CSG-"
 createDirectoryCommand = f'mkdir -p {kcolorschemes}'
 subprocess.Popen(createDirectoryCommand.split(), stdout=subprocess.PIPE)
 
-hexColor, rgbTuple, accentRgbTuple = selectColor(True)
+hexColor, rgbTuple, accentRgbTuple = selectColor()
 
 defaultName = f'{prefix}{hexColor.lstrip("#")}'.upper()
 
