@@ -4,8 +4,9 @@ import os
 from PIL import Image
 from colorthief import ColorThief
 
-darkColorScheme = "/usr/share/color-schemes/BreezeDark.colors"
-lightColorScheme = "/usr/share/color-schemes/BreezeLight.colors"
+dir = os.path.dirname(__file__)
+darkColorScheme = f"{dir}/TemplateDark.colors"
+lightColorScheme = f"{dir}/TemplateLight.colors"
 kwinrules = os.path.expanduser("~/.config/kwinrulesrc")
 kcolorschemes = os.path.expanduser("~/.local/share/color-schemes")
 config = os.path.expanduser(
@@ -18,10 +19,18 @@ def lighten(color, amount=0.5):
     b = color[2]
 
     hslColor = colorsys.rgb_to_hls(r, g, b)
-    newColor = colorsys.hls_to_rgb(
-        hslColor[0], 1 - amount * (1 - hslColor[1]), hslColor[2])
 
-    return f'{",".join(map(str, tuple(map(int, newColor))))}'
+    newR = hslColor[0] if hslColor[0] <= 255 else 255
+    newG = 1 - amount * (1 - hslColor[1])
+    newB = hslColor[2]
+
+    colorTuple = colorsys.hls_to_rgb(newR, newG, newB)
+
+    colorList = list(colorTuple)
+    colorList[:] = [x if x <= 255 else 255 for x in colorList]
+    colorTuple = tuple(colorList)
+
+    return f'{",".join(map(str, tuple(map(int, colorTuple))))}'
 
 
 def setColorScheme(color):
@@ -30,9 +39,9 @@ def setColorScheme(color):
     b = color[2]
 
     if (r*0.299 + g*0.587 + b*0.114) > 186:
-        return lightColorScheme
+        return (lightColorScheme, "light")
     else:
-        return darkColorScheme
+        return (darkColorScheme, "dark")
 
 
 def selectColor(willSelectAccent):
@@ -47,9 +56,7 @@ def selectColor(willSelectAccent):
 
     rgbTuple = tuple(int(hexColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
 
-    rgbColor = f'{",".join(map(str,rgbTuple))}'
-
-    darkRgbColor = lighten(rgbTuple, 0.9)
+    accentRgbTuple = (61, 174, 233)
 
     if (willSelectAccent):
         print("Select accent color from screen")
@@ -62,8 +69,6 @@ def selectColor(willSelectAccent):
         accentRgbTuple = tuple(int(accentHexColor.lstrip('#')[
                                i:i+2], 16) for i in (0, 2, 4))
 
-        accentRgbColor = f'{",".join(map(str,accentRgbTuple))}'
+        return hexColor, rgbTuple, accentRgbTuple
 
-        return hexColor, rgbTuple, rgbColor, darkRgbColor, accentRgbColor
-
-    return hexColor, rgbTuple, rgbColor, darkRgbColor
+    return hexColor, rgbTuple, accentRgbTuple

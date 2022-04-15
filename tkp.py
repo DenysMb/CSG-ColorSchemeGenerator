@@ -25,11 +25,14 @@ ruleName = f'{prefix}{appName}'
 
 print(f'Name: {name}')
 
-hexColor, rgbTuple, rgbColor, darkRgbColor = selectColor(False)
+hexColor, rgbTuple, accentRgbTuple = selectColor(False)
+
+rgbColor = lighten(rgbTuple, 1)
+accentColor = lighten(accentRgbTuple, 1)
 
 newColorScheme=f'{kcolorschemes}/{ruleName}.colors'
 
-colorScheme = setColorScheme(rgbTuple)
+colorScheme, mode = setColorScheme(rgbTuple)
 
 subprocess.Popen(f'cp {colorScheme} {newColorScheme}'.split(), stdout=subprocess.PIPE).wait()
 
@@ -40,18 +43,30 @@ colorSchemeFile.close()
 newColorSchemeFile = open(newColorScheme, "w")
 
 for line in lines:
-  if "Name" in line:
-    continue
-  if "BackgroundNormal" in line:
-    line = f'BackgroundNormal={rgbColor}\n'
-  if "BackgroundAlternate" in line:
-    line = f'BackgroundAlternate={rgbColor}\n'
-  if "activeBackground" in line:
-    line = f'activeBackground={rgbColor}\n'
-  if "inactiveBackground" in line:
-    line = f'inactiveBackground={rgbColor}\n'
-  if "[General]" in line:
-    line = f'[General]\nName={ruleName}\n'
+  if "{BACKGROUND_1}" in line:
+        line = line.replace("{BACKGROUND_1}", rgbColor)
+  if "{BACKGROUND_2}" in line:
+      line = line.replace("{BACKGROUND_2}", rgbColor)
+  if "{BACKGROUND_3}" in line:
+      line = line.replace("{BACKGROUND_3}", rgbColor)
+  if "{BACKGROUND_4}" in line:
+      line = line.replace("{BACKGROUND_4}", rgbColor)
+  if "{BACKGROUND_5}" in line:
+      line = line.replace("{BACKGROUND_5}", rgbColor)
+  if "{BACKGROUND_6}" in line:
+      line = line.replace("{BACKGROUND_6}", rgbColor)
+  if "{ACCENT_1}" in line:
+      line = line.replace("{ACCENT_1}", accentColor)
+  if "{ACCENT_2}" in line:
+      line = line.replace("{ACCENT_2}", accentColor)
+  if "{ACCENT_3}" in line:
+      line = line.replace("{ACCENT_3}", accentColor)
+  if "{HEADER_1}" in line:
+      line = line.replace("{HEADER_1}", rgbColor)
+  if "{HEADER_2}" in line:
+      line = line.replace("{HEADER_2}", rgbColor)
+  if "{NAME}" in line:
+      line = line.replace("{NAME}", ruleName)
   newColorSchemeFile.write(line)
 
 newColorSchemeFile.close()
