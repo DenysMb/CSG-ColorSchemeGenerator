@@ -3,10 +3,14 @@ import subprocess
 import os
 
 dir = os.path.dirname(__file__)
-darkColorScheme = f"{dir}/TemplateDark.colors"
-lightColorScheme = f"{dir}/TemplateLight.colors"
+darkColorScheme = f"{dir}/Color-scheme/TemplateDark.colors"
+lightColorScheme = f"{dir}/Color-scheme/TemplateLight.colors"
+darkKonsoleColorScheme = f"{dir}/Konsole/TemplateDark.colorscheme"
+lightKonsoleColorScheme = f"{dir}/Konsole/TemplateLight.colorscheme"
+konsoleTemplate = f"{dir}/Konsole/Template.profile"
 kwinrules = os.path.expanduser("~/.config/kwinrulesrc")
 kcolorschemes = os.path.expanduser("~/.local/share/color-schemes")
+konsoleDir = os.path.expanduser("~/.local/share/konsole")
 config = os.path.expanduser(
     "~/.config/plasma-org.kde.plasma.desktop-appletsrc")
 
@@ -42,6 +46,12 @@ def setColorScheme(color):
         return (darkColorScheme, "dark")
 
 
+def setKonsoleColorScheme(mode):
+    if (mode == "light"):
+        return (lightKonsoleColorScheme, konsoleTemplate)
+    else:
+        return (darkKonsoleColorScheme, konsoleTemplate)
+
 def selectColor():
     print("Select window color from screen")
 
@@ -65,3 +75,56 @@ def selectColor():
         i:i+2], 16) for i in (0, 2, 4))
 
     return hexColor, rgbTuple, accentRgbTuple
+
+def generateKonsoleColors(name, mode, palette):
+    colorName = name
+    colorScheme, colorProfile = setKonsoleColorScheme(mode)
+    background1 = lighten(palette, 1)
+    background2 = lighten(palette, 1.1)
+    background4 = lighten(palette, 0.9)
+
+    createDirectoryCommand = f'mkdir -p {konsoleDir}'
+    subprocess.Popen(createDirectoryCommand.split(),
+                     stdout=subprocess.PIPE)
+
+    newColorScheme = f'{konsoleDir}/{colorName}.colorscheme'
+    newColorProfile = f'{konsoleDir}/{colorName}.profile'
+
+    subprocess.Popen(f'cp {colorScheme} {newColorScheme}'.split(),
+                     stdout=subprocess.PIPE).wait()
+    subprocess.Popen(f'cp {colorProfile} {newColorProfile}'.split(),
+                     stdout=subprocess.PIPE).wait()
+
+    # COLOR SCHEME FILE
+    colorSchemeFile = open(newColorScheme, "r")
+    colorSchemeLines = colorSchemeFile.readlines()
+    colorSchemeFile.close()
+
+    newColorSchemeFile = open(newColorScheme, "w")
+
+    for line in colorSchemeLines:
+        if "{BACKGROUND_1}" in line:
+            line = line.replace("{BACKGROUND_1}", background1)
+        if "{BACKGROUND_2}" in line:
+            line = line.replace("{BACKGROUND_2}", background2)
+        if "{BACKGROUND_4}" in line:
+            line = line.replace("{BACKGROUND_4}", background4)
+        if "{NAME}" in line:
+            line = line.replace("{NAME}", colorName)
+        newColorSchemeFile.write(line)
+
+    newColorSchemeFile.close()
+
+    # PROFILE FILE
+    colorProfileFile = open(newColorProfile, "r")
+    colorProfileLines = colorProfileFile.readlines()
+    colorProfileFile.close()
+
+    newColorProfileFile = open(newColorProfile, "w")
+
+    for line in colorProfileLines:
+        if "{NAME}" in line:
+            line = line.replace("{NAME}", colorName)
+        newColorProfileFile.write(line)
+
+    newColorProfileFile.close()

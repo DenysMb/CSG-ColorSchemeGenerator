@@ -1,5 +1,5 @@
 import subprocess
-from utils import selectColor, setColorScheme, kcolorschemes, lighten
+from utils import selectColor, setColorScheme, kcolorschemes, lighten, generateKonsoleColors
 
 prefix = "CSG-"
 
@@ -204,3 +204,6 @@ newColorSchemeFileDarkHeader.close()
 
 subprocess.Popen(f'plasma-apply-colorscheme {colorName}'.split(),
                  stdout=subprocess.PIPE).wait()
+
+# GENERATE KONSOLE COLORS AND PROFILE
+generateKonsoleColors(colorName, mode, rgbTuple)
