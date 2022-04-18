@@ -206,4 +206,4 @@ subprocess.Popen(f'plasma-apply-colorscheme {colorName}'.split(),
                  stdout=subprocess.PIPE).wait()
 
 # GENERATE KONSOLE COLORS AND PROFILE
-generateKonsoleColors(colorName, mode, rgbTuple)
+generateKonsoleColors(colorName, mode, rgbTuple, accentRgbTuple)
