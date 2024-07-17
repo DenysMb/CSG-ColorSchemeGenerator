@@ -10,15 +10,14 @@ hexColor, rgbTuple, accentRgbTuple = selectColor()
 
 defaultName = f'{prefix}{hexColor.lstrip("#")}'.upper()
 
-customName = input(
-    f"Write a name for the colorscheme or leave it blank to use the default name ({defaultName}): ")
+customNameCommand = ['kdialog', '--title', 'CSG - Color Scheme Generator', '--inputbox', "Write a name for the colorscheme", defaultName]
+customName = subprocess.check_output(customNameCommand, universal_newlines=True).strip()
 
 colorName = customName if len(customName.strip()) else defaultName
 
 newColorScheme = f'{kcolorschemes}/{colorName}.colors'
 newColorSchemeNoHeader = f'{kcolorschemes}/{colorName}-NoHeader.colors'
 newColorSchemeDarkHeader = f'{kcolorschemes}/{colorName}-DarkHeader.colors'
-newColorSchemePlain = f'{kcolorschemes}/{colorName}-Plain.colors'
 
 colorScheme, mode = setColorScheme(rgbTuple)
 
@@ -28,11 +27,8 @@ subprocess.Popen(
     f'cp {colorScheme} {newColorSchemeNoHeader}'.split(), stdout=subprocess.PIPE).wait()
 subprocess.Popen(
     f'cp {colorScheme} {newColorSchemeDarkHeader}'.split(), stdout=subprocess.PIPE).wait()
-subprocess.Popen(
-    f'cp {colorScheme} {newColorSchemePlain}'.split(), stdout=subprocess.PIPE).wait()
 
 # SET COLORS
-
 background1 = lighten(rgbTuple, 1)
 background2 = lighten(rgbTuple, 1.1)
 background3 = lighten(rgbTuple, 0.8)
@@ -120,50 +116,6 @@ for line in colorSchemeNoHeaderLines:
 
 newColorSchemeFileNoHeader.close()
 
-# PLAIN STYLE
-colorSchemeFilePlain = open(newColorSchemePlain, "r")
-colorSchemePlainLines = colorSchemeFilePlain.readlines()
-colorSchemeFilePlain.close()
-
-newColorSchemeFilePlain = open(newColorSchemePlain, "w")
-
-for line in colorSchemePlainLines:
-    if "{BACKGROUND_1}" in line:
-        line = line.replace(
-            "{BACKGROUND_1}", background1 if mode == "dark" else background2)
-    if "{BACKGROUND_2}" in line:
-        line = line.replace(
-            "{BACKGROUND_2}", background1 if mode == "dark" else background2)
-    if "{BACKGROUND_3}" in line:
-        line = line.replace(
-            "{BACKGROUND_3}", background1 if mode == "dark" else background2)
-    if "{BACKGROUND_4}" in line:
-        line = line.replace(
-            "{BACKGROUND_4}", background1 if mode == "dark" else background2)
-    if "{BACKGROUND_5}" in line:
-        line = line.replace(
-            "{BACKGROUND_5}", background1 if mode == "dark" else background2)
-    if "{BACKGROUND_6}" in line:
-        line = line.replace(
-            "{BACKGROUND_6}", background1 if mode == "dark" else background2)
-    if "{ACCENT_1}" in line:
-        line = line.replace("{ACCENT_1}", accent1)
-    if "{ACCENT_2}" in line:
-        line = line.replace("{ACCENT_2}", accent2)
-    if "{ACCENT_3}" in line:
-        line = line.replace("{ACCENT_3}", accent3)
-    if "{HEADER_1}" in line:
-        line = line.replace(
-            "{HEADER_1}", background1 if mode == "dark" else background2)
-    if "{HEADER_2}" in line:
-        line = line.replace(
-            "{HEADER_2}", background1 if mode == "dark" else background2)
-    if "{NAME}" in line:
-        line = line.replace("{NAME}", f'{colorName}-Plain')
-    newColorSchemeFilePlain.write(line)
-
-newColorSchemeFilePlain.close()
-
 # DARK HEADER STYLE
 colorSchemeFileDarkHeader = open(newColorSchemeDarkHeader, "r")
 colorSchemeDarkHeaderLines = colorSchemeFileDarkHeader.readlines()
@@ -202,8 +154,21 @@ for line in colorSchemeDarkHeaderLines:
 
 newColorSchemeFileDarkHeader.close()
 
-subprocess.Popen(f'plasma-apply-colorscheme {colorName}'.split(),
-                 stdout=subprocess.PIPE).wait()
-
 # GENERATE KONSOLE COLORS AND PROFILE
-generateKonsoleColors(colorName, mode, rgbTuple, accentRgbTuple)
+try:
+    generateKonsoleColorsCommand = ['kdialog', '--title', 'CSG - Color Scheme Generator', '--yesno', "Do you want to also generate Konsole color scheme?"]
+    subprocess.check_output(generateKonsoleColorsCommand, universal_newlines=True).strip()
+
+    generateKonsoleColors(colorName, mode, rgbTuple, accentRgbTuple)
+except:
+    pass
+
+# APPLY THEME
+try:
+    applyThemeCommand = ['kdialog', '--title', 'CSG - Color Scheme Generator', '--yesno', "Do you want to apply the color scheme now?"]
+    subprocess.check_output(applyThemeCommand, universal_newlines=True).strip()
+
+    subprocess.Popen(f'plasma-apply-colorscheme {colorName}'.split(),
+                    stdout=subprocess.PIPE).wait()
+except:
+    pass

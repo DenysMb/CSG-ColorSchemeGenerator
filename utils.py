@@ -55,8 +55,9 @@ def setKonsoleColorScheme(mode):
 
 
 def selectColor():
-    print("Select window color from screen")
-
+    step1Command = ['kdialog', '--title', 'CSG - Color Scheme Generator', '--msgbox', "Select the primary color"]
+    subprocess.check_output(step1Command, universal_newlines=True).strip()
+    
     kcolorchooserCommand = 'kcolorchooser --print'
 
     hexColor = subprocess.check_output(
@@ -66,7 +67,8 @@ def selectColor():
 
     rgbTuple = tuple(int(hexColor.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
 
-    print("Select accent color from screen")
+    step2Command = ['kdialog', '--title', 'CSG - Color Scheme Generator', '--msgbox', "Select the accent color"]
+    subprocess.check_output(step2Command, universal_newlines=True).strip()
 
     accentHexColor = subprocess.check_output(
         kcolorchooserCommand.split(), universal_newlines=True).strip()

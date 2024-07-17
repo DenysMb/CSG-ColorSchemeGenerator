@@ -89,8 +89,8 @@ Color=0,0,0
 Color=0,0,0
 
 [General]
-Blur=true
+Blur=false
 ColorRandomization=false
 Description={NAME}
-Opacity=0.8
+Opacity=1
 Wallpaper=
