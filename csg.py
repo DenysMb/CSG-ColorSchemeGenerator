@@ -18,6 +18,7 @@ colorName = customName if len(customName.strip()) else defaultName
 newColorScheme = f'{kcolorschemes}/{colorName}.colors'
 newColorSchemeNoHeader = f'{kcolorschemes}/{colorName}-NoHeader.colors'
 newColorSchemeDarkHeader = f'{kcolorschemes}/{colorName}-DarkHeader.colors'
+newColorSchemeTinted = f'{kcolorschemes}/{colorName}-Tinted.colors'
 
 colorScheme, mode = setColorScheme(rgbTuple)
 
@@ -27,6 +28,8 @@ subprocess.Popen(
     f'cp {colorScheme} {newColorSchemeNoHeader}'.split(), stdout=subprocess.PIPE).wait()
 subprocess.Popen(
     f'cp {colorScheme} {newColorSchemeDarkHeader}'.split(), stdout=subprocess.PIPE).wait()
+subprocess.Popen(
+    f'cp {colorScheme} {newColorSchemeTinted}'.split(), stdout=subprocess.PIPE).wait()
 
 # SET COLORS
 background1 = lighten(rgbTuple, 1)
@@ -72,6 +75,10 @@ for line in colorSchemeLines:
         line = line.replace("{HEADER_1}", header1)
     if "{HEADER_2}" in line:
         line = line.replace("{HEADER_2}", header2)
+    if "{TINT_FACTOR}" in line:
+        line = line.replace("{TINT_FACTOR}", "0")
+    if "{TINT_TITLE_BAR}" in line:
+        line = line.replace("{TINT_TITLE_BAR}", "false")
     if "{NAME}" in line:
         line = line.replace("{NAME}", colorName)
     newColorSchemeFile.write(line)
@@ -110,6 +117,10 @@ for line in colorSchemeNoHeaderLines:
     if "{HEADER_2}" in line:
         line = line.replace(
             "{HEADER_2}", header2 if mode == "dark" else header1)
+    if "{TINT_FACTOR}" in line:
+        line = line.replace("{TINT_FACTOR}", "0")
+    if "{TINT_TITLE_BAR}" in line:
+        line = line.replace("{TINT_TITLE_BAR}", "false")
     if "{NAME}" in line:
         line = line.replace("{NAME}", f'{colorName}-NoHeader')
     newColorSchemeFileNoHeader.write(line)
@@ -148,11 +159,57 @@ for line in colorSchemeDarkHeaderLines:
     if "{HEADER_2}" in line:
         line = line.replace(
             "{HEADER_2}", header3 if mode == "dark" else header2)
+    if "{TINT_FACTOR}" in line:
+        line = line.replace("{TINT_FACTOR}", "0")
+    if "{TINT_TITLE_BAR}" in line:
+        line = line.replace("{TINT_TITLE_BAR}", "false")
     if "{NAME}" in line:
         line = line.replace("{NAME}", f'{colorName}-DarkHeader')
     newColorSchemeFileDarkHeader.write(line)
 
 newColorSchemeFileDarkHeader.close()
+
+# NO HEADER STYLE
+colorSchemeFileTinted = open(newColorSchemeTinted, "r")
+colorSchemeTintedLines = colorSchemeFileTinted.readlines()
+colorSchemeFileTinted.close()
+
+newColorSchemeFileTinted = open(newColorSchemeTinted, "w")
+
+for line in colorSchemeTintedLines:
+    if "{BACKGROUND_1}" in line:
+        line = line.replace("{BACKGROUND_1}", background1)
+    if "{BACKGROUND_2}" in line:
+        line = line.replace("{BACKGROUND_2}", background2)
+    if "{BACKGROUND_3}" in line:
+        line = line.replace("{BACKGROUND_3}", background3)
+    if "{BACKGROUND_4}" in line:
+        line = line.replace("{BACKGROUND_4}", background4)
+    if "{BACKGROUND_5}" in line:
+        line = line.replace("{BACKGROUND_5}", background5)
+    if "{BACKGROUND_6}" in line:
+        line = line.replace("{BACKGROUND_6}", background6)
+    if "{ACCENT_1}" in line:
+        line = line.replace("{ACCENT_1}", accent1)
+    if "{ACCENT_2}" in line:
+        line = line.replace("{ACCENT_2}", accent2)
+    if "{ACCENT_3}" in line:
+        line = line.replace("{ACCENT_3}", accent3)
+    if "{HEADER_1}" in line:
+        line = line.replace(
+            "{HEADER_1}", header2 if mode == "dark" else header1)
+    if "{HEADER_2}" in line:
+        line = line.replace(
+            "{HEADER_2}", header2 if mode == "dark" else header1)
+    if "{TINT_FACTOR}" in line:
+        line = line.replace("{TINT_FACTOR}", "0.1")
+    if "{TINT_TITLE_BAR}" in line:
+        line = line.replace("{TINT_TITLE_BAR}", "true")
+    if "{NAME}" in line:
+        line = line.replace("{NAME}", f'{colorName}-Tinted')
+    newColorSchemeFileTinted.write(line)
+
+newColorSchemeFileTinted.close()
 
 # GENERATE KONSOLE COLORS AND PROFILE
 try:

@@ -133,6 +133,8 @@ ForegroundVisited=155,89,182
 [General]
 ColorScheme=BreezeLight
 Name={NAME}
+TintFactor={TINT_FACTOR}
+TitlebarIsAccentColored={TINT_TITLE_BAR}
 shadeSortColumn=true
 
 [KDE]
