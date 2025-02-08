@@ -21,4 +21,4 @@ All the colors are generated with a normal style and with an alternative style, 
 
 In this video I'll show how easy is to generate a color scheme with this script:
 
-https://user-images.githubusercontent.com/33737137/161628670-184e1b52-5e4b-412a-a96c-a9915b8d97a4.mp4
+https://github.com/user-attachments/assets/49c922fa-415f-4b4a-aa19-ca4df6831c61
